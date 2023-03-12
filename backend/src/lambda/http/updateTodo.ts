@@ -19,6 +19,10 @@ export const handler = middy(
 
     return {
       statusCode: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: ''
     }
   }
