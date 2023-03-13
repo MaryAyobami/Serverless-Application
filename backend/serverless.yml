@@ -2,7 +2,7 @@
 org: maryayobami
 app: serverless-todo-app
 service: serverless-todo-app
-frameworkVersion:  "2.21.1"
+frameworkVersion:  "3.28.1"
 
 plugins:
   - serverless-webpack
@@ -28,7 +28,7 @@ provider:
   environment:
     TODOS_TABLE: serverless-todo-app-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: serverless-todo-app-images-${self:provider.stage}
+    ATTACHMENT_S3_BUCKET: bams-serverless-todo-app-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     PROJECT_NAME: serverless-todo-app
     
@@ -263,42 +263,43 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
-  
+    # TodosTable:
+
 
     # TODO: Complete the bucket properties below.
     # Do not forget to add the CorsConfiguration propoerty
-    # AttachmentsBucket:
-    #   Type: AWS::S3::Bucket
-    #   Properties:
-    #     BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
-    #     CorsConfiguration:
-    #       CorsRules:
-    #         - AllowedHeaders:
-    #             - '*'
-    #           AllowedMethods:
-    #             - GET
-    #             - PUT
-    #             - POST
-    #             - DELETE
-    #             - HEAD
-    #           AllowedOrigins:
-    #             - '*'
-    #           MaxAge: 300
+    AttachmentsBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.ATTACHMENT_S3_BUCKET}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - '*'
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+                - HEAD
+              AllowedOrigins:
+                - '*'
+              MaxAge: 300
 
     # TODO: Complete the policy below and attach it to the bucket defined above
     # For cross referencing the name of the bucket, use "!Ref AttachmentsBucket"
-    # BucketPolicy:
-      # Type: AWS::S3::BucketPolicy
-      # Properties:
-      #   PolicyDocument:
-      #     Id: MyPolicy
-      #     Version: 2012-10-17
-      #     Statement:
-      #       - Sid: PublicReadForGetBucketObjects
-      #         Effect: Allow
-      #         Principal: '*'
-      #         Action:
-      #           - 's3:GetObject'
-      #         Resource:
-      #           - 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
-      #   Bucket: !Ref AttachmentsBucket
+    BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        PolicyDocument:
+          Id: MyPolicy
+          Version: "2012-10-17"
+          Statement:
+            - Sid: PublicReadForGetBucketObjects
+              Effect: Allow
+              Principal: '*'
+              Action:
+                - 's3:GetObject'
+              Resource:
+                - 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
+        Bucket: !Ref AttachmentsBucket
